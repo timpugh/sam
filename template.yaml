@@ -11,7 +11,7 @@ Globals:
     Handler: app.lambda_handler
     Timeout: 5
     Runtime: python3.12
-    Architectures: [arm64]
+    Architectures: [x86_64]
 
 Resources:
   HelloWorldFunction:
