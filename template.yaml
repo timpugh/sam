@@ -13,6 +13,16 @@ Globals:
     Runtime: python3.12
     Architectures: [x86_64]
 
+Parameters:
+  ExistingTable:
+    Type: String
+    Default: example-table
+    Description: (Required) The name of an existing DynamoDB
+    MinLength: 3
+    MaxLength: 255
+    AllowedPattern: ^[A-Za-z_-]+$
+    ConstraintDescription: "Required. Can be characters, hyphen, and underscore only. No numbers or special characters allowed."
+
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -35,6 +45,9 @@ Resources:
           Properties:
             Path: /players
             Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExistingTable
 
   GetPlayerFunction:
     Type: AWS::Serverless::Function
@@ -46,6 +59,9 @@ Resources:
           Properties:
             Path: /players/{id}
             Method: get
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExistingTable
 
   ListPlayersFunction:
     Type: AWS::Serverless::Function
@@ -57,6 +73,9 @@ Resources:
           Properties:
             Path: /players/
             Method: get
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExistingTable
 
   UpdatePlayerFunction:
     Type: AWS::Serverless::Function
@@ -68,6 +87,9 @@ Resources:
           Properties:
             Path: /players/{id}
             Method: put
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExistingTable
 
   DeletePlayerFunction:
     Type: AWS::Serverless::Function
@@ -79,6 +101,9 @@ Resources:
           Properties:
             Path: /players/{id}/{date}
             Method: delete
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref ExistingTable
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
