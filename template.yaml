@@ -25,6 +25,50 @@ Parameters:
       No numbers or special characters allowed.
 
 Resources:
+# IAM Role for API GW + CWL
+  CloudWatchRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            Action: 'sts:AssumeRole'
+            Effect: Allow
+            Principal:
+              Service: apigateway.amazonaws.com
+        Path: /
+        ManagedPolicyArns:
+          - 'arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs'
+
+  ApiCWLRoleArn:
+    Type: AWS::ApiGateway::Account
+    Properties: 
+      CloudWatchRoleArn: !GetAtt CloudWatchRole.Arn
+
+  AccessLogGroup:
+    Type: AWS::Logs::LogGroup
+
+  RestApi:
+    Type: AWS::Serverless::Api
+    DependsOn: ApiCWLRoleArn
+    Properties:
+      OpenApiVersion: '3.0.1'
+      EndpointConfiguration: EDGE
+      AccessLogSetting:
+        DestinationArn: !GetAtt AccessLogGroup.Arn
+        Format:
+          ' {    "accountId": "$context.accountId",    "apiId": "$context.apiId",    "stage": "$context.stage",    "resourcePath": "$context.resourcePath",    "httpMethod": "$context.httpMethod",    "protocol": "$context.protocol",    "status": "$context.status",    "responseType": "$context.error.responseType",    "error.message": "$context.error.message",    "requestTime": "$context.requestTime",    "requestId": "$context.requestId",    "ip": "$context.identity.sourceIp",    "caller": "$context.identity.caller",    "user": "$context.identity.user",    "responseLength": "$context.responseLength"}'
+      StageName: Prod
+      MethodSettings:    
+        - DataTraceEnabled: true
+          HttpMethod: '*'
+          LoggingLevel: INFO
+          MetricsEnabled: true
+          ResourcePath: '/*'
+          ThrottlingBurstLimit: 5000
+          ThrottlingRateLimit: 10000
+      TracingEnabled: true
+
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -35,6 +79,7 @@ Resources:
           Properties:
             Path: /hello
             Method: get
+            RestApiId: !Ref RestApi
 
   CreatePlayerFunction:
     Type: AWS::Serverless::Function
@@ -46,6 +91,7 @@ Resources:
           Properties:
             Path: /players
             Method: post
+            RestApiId: !Ref RestApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
@@ -63,6 +109,7 @@ Resources:
           Properties:
             Path: /players/{id}
             Method: get
+            RestApiId: !Ref RestApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
@@ -80,6 +127,7 @@ Resources:
           Properties:
             Path: /players/
             Method: get
+            RestApiId: !Ref RestApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
@@ -97,6 +145,7 @@ Resources:
           Properties:
             Path: /players/{id}
             Method: put
+            RestApiId: !Ref RestApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
@@ -114,6 +163,7 @@ Resources:
           Properties:
             Path: /players/{id}/{date}
             Method: delete
+            RestApiId: !Ref RestApi
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
@@ -127,7 +177,7 @@ Outputs:
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldApi:
     Description: API Gateway endpoint URL for Prod stage for Hello World function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello
   HelloWorldFunction:
     Description: Hello World Lambda Function ARN
     Value: !GetAtt HelloWorldFunction.Arn
@@ -136,7 +186,7 @@ Outputs:
     Value: !GetAtt HelloWorldFunctionRole.Arn
   CreatePlayerApi:
     Description: API Gateway endpoint URL for Prod stage for Create Player function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players
   CreatePlayerFunction:
     Description: Create Player Lambda Function ARN
     Value: !GetAtt CreatePlayerFunction.Arn
@@ -145,7 +195,7 @@ Outputs:
     Value: !GetAtt CreatePlayerFunctionRole.Arn
   GetPlayerApi:
     Description: API Gateway endpoint URL for Prod stage for Get Player function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod//players/{id}
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod//players/{id}
   GetPlayerFunction:
     Description: Get Activity Lambda Function ARN
     Value: !GetAtt GetPlayerFunction.Arn
@@ -154,7 +204,7 @@ Outputs:
     Value: !GetAtt GetPlayerFunctionRole.Arn
   ListPlayersApi:
     Description: API Gateway endpoint URL for Prod stage for List Players function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/
   ListPlayersFunction:
     Description: List Activities Lambda Function ARN
     Value: !GetAtt ListPlayersFunction.Arn
@@ -163,7 +213,7 @@ Outputs:
     Value: !GetAtt ListPlayersFunctionRole.Arn
   UpdatePlayerApi:
     Description: API Gateway endpoint URL for Prod stage for Update Player function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_player/
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_player/
   UpdatePlayerFunction:
     Description: Update Activity Lambda Function ARN
     Value: !GetAtt UpdatePlayerFunction.Arn
@@ -172,7 +222,7 @@ Outputs:
     Value: !GetAtt UpdatePlayerFunctionRole.Arn
   DeletePlayerApi:
     Description: API Gateway endpoint URL for Prod stage for Delete function
-    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/{id}/{date}
+    Value: !Sub https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/{id}/{date}
   DeletePlayerFunction:
     Description: Delete Activity Lambda Function ARN
     Value: !GetAtt DeletePlayerFunction.Arn

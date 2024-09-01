@@ -10,7 +10,8 @@ table = dynamodb.Table(os.environ["TABLE"])
 # Function to create a new player
 def lambda_handler(event, context):
     # Get the player data from the event
-    player_data = event['player']
+    body = json.loads(event['body'])
+    player_data = body['player']
 
     # Generate a unique UUID for the player
     player_data['uuid'] = str(uuid.uuid4())
