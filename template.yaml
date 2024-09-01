@@ -16,7 +16,7 @@ Globals:
 Parameters:
   ExistingTable:
     Type: String
-    Default: example-table
+    Default: nba_table
     Description: (Required) The name of an existing DynamoDB
     MinLength: 3
     MaxLength: 255
