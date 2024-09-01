@@ -1,8 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: >
+Description: |
   sam-app
-
   Sample SAM Template for sam-app
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
@@ -11,7 +10,8 @@ Globals:
     Handler: app.lambda_handler
     Timeout: 5
     Runtime: python3.12
-    Architectures: [x86_64]
+    Architectures:
+      - x86_64
 
 Parameters:
   ExistingTable:
@@ -21,7 +21,8 @@ Parameters:
     MinLength: 3
     MaxLength: 255
     AllowedPattern: ^[A-Za-z_-]+$
-    ConstraintDescription: "Required. Can be characters, hyphen, and underscore only. No numbers or special characters allowed."
+    ConstraintDescription: Required. Can be characters, hyphen, and underscore only.
+      No numbers or special characters allowed.
 
 Resources:
   HelloWorldFunction:
@@ -48,6 +49,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
+      Environment:
+        Variables:
+          TABLE: !Ref ExistingTable
 
   GetPlayerFunction:
     Type: AWS::Serverless::Function
@@ -62,6 +66,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
+      Environment:
+        Variables:
+          TABLE: !Ref ExistingTable
 
   ListPlayersFunction:
     Type: AWS::Serverless::Function
@@ -76,6 +83,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
+      Environment:
+        Variables:
+          TABLE: !Ref ExistingTable
 
   UpdatePlayerFunction:
     Type: AWS::Serverless::Function
@@ -90,6 +100,9 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
+      Environment:
+        Variables:
+          TABLE: !Ref ExistingTable
 
   DeletePlayerFunction:
     Type: AWS::Serverless::Function
@@ -104,62 +117,65 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref ExistingTable
+      Environment:
+        Variables:
+          TABLE: !Ref ExistingTable
 
 Outputs:
   # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
   # Find out more about other implicit resources you can reference within SAM
   # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello"
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello
   HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
+    Description: Hello World Lambda Function ARN
     Value: !GetAtt HelloWorldFunction.Arn
   HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
+    Description: Implicit IAM Role created for Hello World function
     Value: !GetAtt HelloWorldFunctionRole.Arn
   CreatePlayerApi:
-    Description: "API Gateway endpoint URL for Prod stage for Create Player function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players"
+    Description: API Gateway endpoint URL for Prod stage for Create Player function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players
   CreatePlayerFunction:
-    Description: "Create Player Lambda Function ARN"
+    Description: Create Player Lambda Function ARN
     Value: !GetAtt CreatePlayerFunction.Arn
   CreatePlayerFunctionIamRole:
-    Description: "Implicit IAM Role created for Create Activity function"
+    Description: Implicit IAM Role created for Create Activity function
     Value: !GetAtt CreatePlayerFunctionRole.Arn
   GetPlayerApi:
-    Description: "API Gateway endpoint URL for Prod stage for Get Player function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod//players/{id}"
+    Description: API Gateway endpoint URL for Prod stage for Get Player function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod//players/{id}
   GetPlayerFunction:
-    Description: "Get Activity Lambda Function ARN"
+    Description: Get Activity Lambda Function ARN
     Value: !GetAtt GetPlayerFunction.Arn
   GetPlayerFunctionIamRole:
-    Description: "Implicit IAM Role created for Get Player function"
+    Description: Implicit IAM Role created for Get Player function
     Value: !GetAtt GetPlayerFunctionRole.Arn
   ListPlayersApi:
-    Description: "API Gateway endpoint URL for Prod stage for List Players function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/"
+    Description: API Gateway endpoint URL for Prod stage for List Players function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/
   ListPlayersFunction:
-    Description: "List Activities Lambda Function ARN"
+    Description: List Activities Lambda Function ARN
     Value: !GetAtt ListPlayersFunction.Arn
   ListPlayersFunctionIamRole:
-    Description: "Implicit IAM Role created for List Players function"
+    Description: Implicit IAM Role created for List Players function
     Value: !GetAtt ListPlayersFunctionRole.Arn
   UpdatePlayerApi:
-    Description: "API Gateway endpoint URL for Prod stage for Update Player function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_player/"
+    Description: API Gateway endpoint URL for Prod stage for Update Player function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/update_player/
   UpdatePlayerFunction:
-    Description: "Update Activity Lambda Function ARN"
+    Description: Update Activity Lambda Function ARN
     Value: !GetAtt UpdatePlayerFunction.Arn
   UpdatePlayerFunctionIamRole:
-    Description: "Implicit IAM Role created for Update Player function"
+    Description: Implicit IAM Role created for Update Player function
     Value: !GetAtt UpdatePlayerFunctionRole.Arn
   DeletePlayerApi:
-    Description: "API Gateway endpoint URL for Prod stage for Delete function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/{id}/{date}"
+    Description: API Gateway endpoint URL for Prod stage for Delete function
+    Value: !Sub https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/players/{id}/{date}
   DeletePlayerFunction:
-    Description: "Delete Activity Lambda Function ARN"
+    Description: Delete Activity Lambda Function ARN
     Value: !GetAtt DeletePlayerFunction.Arn
   DeletePlayerFunctionIamRole:
-    Description: "Implicit IAM Role created for Delete Player function"
+    Description: Implicit IAM Role created for Delete Player function
     Value: !GetAtt DeletePlayerFunctionRole.Arn

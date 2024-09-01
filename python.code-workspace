@@ -4,5 +4,23 @@
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {},
+	"launch": {
+		"configurations": [
+			{
+				"type": "aws-sam",
+				"request": "direct-invoke",
+				"name": "sam-app:HelloWorldFunction",
+				"invokeTarget": {
+					"target": "template",
+					"templatePath": "${workspaceFolder}/template.yaml",
+					"logicalId": "HelloWorldFunction"
+				},
+				"lambda": {
+					"payload": {},
+					"environmentVariables": {}
+				}
+			}
+		]
+	}
 }
