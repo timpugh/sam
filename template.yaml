@@ -144,7 +144,7 @@ Resources:
         CreateActivities:
           Type: Api
           Properties:
-            Path: /players/{id}
+            Path: /players/{id}/{date}
             Method: put
             RestApiId: !Ref RestApi
       Policies:
