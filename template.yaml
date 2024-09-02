@@ -24,7 +24,78 @@ Parameters:
     ConstraintDescription: Required. Can be characters, hyphen, and underscore only.
       No numbers or special characters allowed.
 
+  GithubAccessToken:
+    Type: String
+    Description: Github Access Token
+    NoEcho: true
+
+  GithubRepository:
+    Type: String
+    Description: GitHub repository URL
+
 Resources:
+
+  MyGitHubSecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: new-github-token
+      Description: GitHub Access Token
+      SecretString: !Ref GithubAccessToken
+
+  AmplifyApp:
+    Type: AWS::Amplify::App
+    Properties:
+      Name: amplify-sam-demo-app
+      Repository:
+        Ref: GithubRepository
+      AccessToken: 
+        Ref: GithubAccessToken
+      IAMServiceRole:
+        Fn::GetAtt:
+        - AmplifyRole
+        - Arn
+      EnvironmentVariables:
+      - Name: ENDPOINT
+        Value:
+          Fn::Sub: https://${RestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/
+    Metadata:
+      SamResourceId: AmplifyApp
+
+  AmplifyBranch:
+    Type: AWS::Amplify::Branch
+    Properties:
+      BranchName: main
+      AppId:
+        Fn::GetAtt:
+        - AmplifyApp
+        - AppId
+      EnableAutoBuild: true
+    Metadata:
+      SamResourceId: AmplifyBranch
+
+  AmplifyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service:
+            - amplify.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      Policies:
+      - PolicyName: Amplify
+        PolicyDocument:
+          Version: 2012-10-17
+          Statement:
+          - Effect: Allow
+            Action: amplify:*
+            Resource: '*'
+    Metadata:
+      SamResourceId: AmplifyRole
+
 # IAM Role for API GW + CWL
   CloudWatchRole:
       Type: AWS::IAM::Role
