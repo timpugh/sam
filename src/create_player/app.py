@@ -23,7 +23,9 @@ def lambda_handler(event, context):
 
         # Return the response
         return {
-            "statusCode": 200,
+            "statusCode": 200,                'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {
                     "message": f"Player {player_data['player_name']} created successfully.",
@@ -34,6 +36,9 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             "statusCode": 500,
+            'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {
                     "error": f"Error adding {

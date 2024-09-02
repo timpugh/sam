@@ -16,4 +16,10 @@ def lambda_handler(event, context):
     response = table.query(KeyConditionExpression=Key("player_name").eq(player_name))
     print(response)
 
-    return {"statusCode": 200, "body": json.dumps(response["Items"])}
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": json.dumps(response["Items"]),
+    }

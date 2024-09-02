@@ -10,4 +10,10 @@ table = dynamodb.Table(os.environ["TABLE"])
 def lambda_handler(message, context):
     response = table.scan()
 
-    return {"statusCode": 200, "headers": {}, "body": json.dumps(response["Items"])}
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Access-Control-Allow-Origin": "*",
+        },
+        "body": json.dumps(response["Items"]),
+    }

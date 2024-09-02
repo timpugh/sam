@@ -34,6 +34,9 @@ def lambda_handler(event, context):
         )
         return {
             "statusCode": 200,
+            'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {
                     "message": f"Player {player_name} updated successfully for season {season}."
@@ -43,6 +46,9 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             "statusCode": 500,
+            'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {"error": f"Error updating player {player_name}: {str(e)}"}
             ),

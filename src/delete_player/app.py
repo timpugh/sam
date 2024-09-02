@@ -22,6 +22,9 @@ def lambda_handler(event, context):
         table.delete_item(Key=key)
         return {
             "statusCode": 200,
+            'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {
                     "message": f"Player {player_name} deleted successfully for season {season}."
@@ -31,6 +34,9 @@ def lambda_handler(event, context):
     except Exception as e:
         return {
             "statusCode": 500,
+            'headers': {
+                    "Access-Control-Allow-Origin": "*",
+                },
             "body": json.dumps(
                 {"error": f"Error deleting player {player_name}: {str(e)}"}
             ),
