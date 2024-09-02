@@ -1,12 +1,13 @@
+import boto3
+import os
 import json
-# import boto3
+
+# Get the DynamoDB resource
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(os.environ["TABLE"])
 
 
-def lambda_handler(event, context):
+def lambda_handler(message, context):
+    response = table.scan()
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-        }),
-    }
+    return {"statusCode": 200, "headers": {}, "body": json.dumps(response["Items"])}
