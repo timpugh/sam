@@ -32,11 +32,9 @@ def lambda_handler(event, context):
         }
 
     except Exception as e:
-        player_name = player_data['player_name']
-
         return {
             'statusCode': 500,
-            'body': json.dumps({
-                'error': f"Error adding player {player_name}: {str(e)}"
+            "body": json.dumps({
+                "error": f"Error adding {player_data['player_name']}: {str(e)}"
             })
         }
