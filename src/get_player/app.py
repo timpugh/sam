@@ -1,12 +1,19 @@
+import boto3
 import json
-# import boto3
+import os
+from urllib.parse import unquote
+from boto3.dynamodb.conditions import Key
+
+
+# Get the DynamoDB resource
+dynamodb = boto3.resource("dynamodb")
+table = dynamodb.Table(os.environ["TABLE"])
 
 
 def lambda_handler(event, context):
+    player_name = unquote(event["pathParameters"]["id"])
 
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "hello world",
-        }),
-    }
+    response = table.query(KeyConditionExpression=Key("player_name").eq(player_name))
+    print(response)
+
+    return {"statusCode": 200, "body": json.dumps(response["Items"])}
