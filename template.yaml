@@ -9,7 +9,7 @@ Globals:
   Function:
     Handler: app.lambda_handler
     Timeout: 5
-    Runtime: python3.12
+    Runtime: python3.13
     Architectures:
       - x86_64
 

@@ -1,3 +1,9 @@
 pytest
 boto3
 requests
+pytest-env
+pytest-cov
+pytest-xdist
+radon
+sphinx
+bandit
