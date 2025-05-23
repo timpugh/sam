@@ -12,6 +12,10 @@ Globals:
     Runtime: python3.13
     Architectures:
       - x86_64
+    Tracing: Active
+    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
+    LoggingConfig:
+      LogFormat: JSON
 
 Parameters:
   ExistingTable:

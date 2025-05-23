@@ -1,6 +1,7 @@
 {
     "configurations": [
         
+        
         {
             "type": "aws-sam",
             "request": "direct-invoke",
