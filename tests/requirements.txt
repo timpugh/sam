@@ -7,3 +7,8 @@ pytest-xdist
 radon
 sphinx
 bandit
+cfn-lint
+#pydot is used for generating graphs using cfn-lint
+pydot
+#https://awslabs.github.io/serverless-rules/cfn-lint/
+cfn-lint-serverless
